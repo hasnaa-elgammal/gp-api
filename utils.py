@@ -22,7 +22,7 @@ def Curr_Pred(img):
     y = ['100', '100', '10', '10', '200', '200', '20', '20', '50', '50', '5', '5']
     # import model
     model = tf.keras.models.load_model("models/money.h5", compile=False)
-
+    img = np.array(img)
     dim = (224, 224)
     img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
     img = np.expand_dims(img, axis=0)

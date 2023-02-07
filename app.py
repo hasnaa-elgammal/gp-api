@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from request_bodies.general_request import GeneralRequest
 from request_bodies.speech_to_text_request import SpeechToTextRequest
 from utils import *
+import base64
 
 
 app = FastAPI()
@@ -16,9 +17,8 @@ async def speech_to_text(req: SpeechToTextRequest):
         result = predict_speech_to_text(req.sound)
         return result
     else:
-        return {
-                'text': 'Error. Please try again',
-                }
+        result = "Error. Please try again."
+        return result
 
 @app.post("/money")
 async def money(req: GeneralRequest):
@@ -27,7 +27,10 @@ async def money(req: GeneralRequest):
         result = Curr_Pred(decoded_img)
         return predict_text_to_speech(result,"ar")
     else:
-        return "Error. Please Try Again"
+        result = "Error. Please try again."
+        if req.lang != 'en':
+            result = translate('en', req.lang, result)
+        return predict_text_to_speech(result, req.lang)
 
 @app.post("/ocr")
 async def ocr():
@@ -53,7 +56,10 @@ async def emotions(req: GeneralRequest):
             emotion = "يبدو " + emotion
         return predict_text_to_speech(emotion,"ar")    
     else:
-        return "Error. Please Try Again"
+        result = "Error. Please try again."
+        if req.lang != 'en':
+            result = translate('en', req.lang, result)
+        return predict_text_to_speech(result, req.lang)
 
 
 @app.post("/imagecaption")
@@ -67,9 +73,12 @@ async def color(req: GeneralRequest):
         result = predict_color(decoded_img)
         if(req.lang != 'en'):
             result = translate('en', req.lang, result)
-        return predict_text_to_speech(result,"en")
+        return predict_text_to_speech(result,req.lang)
     else:
-        return "Error. Please Try Again"
+        result = "Error. Please try again."
+        if req.lang != 'en':
+            result = translate('en', req.lang, result)
+        return predict_text_to_speech(result, req.lang)
 
 @app.post("/questions")
 async def questions():
