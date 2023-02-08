@@ -62,10 +62,7 @@ async def emotions(req: GeneralRequest):
         return predict_text_to_speech(result, req.lang)
 
 
-@app.post("/imagecaption")
-async def image_caption():
-    return {'msg': 'hello'}
-
+    
 @app.post("/color")
 async def color(req: GeneralRequest):
     if req.img != '':
@@ -80,6 +77,39 @@ async def color(req: GeneralRequest):
             result = translate('en', req.lang, result)
         return predict_text_to_speech(result, req.lang)
 
-@app.post("/questions")
-async def questions():
-    return {'msg': 'hello'}
+    
+    
+    
+@app.post("/VQA")
+async def VQA(req:VQA_Request):
+    if req.img != '' or req.Question != '':
+        #decoded_img = decode_img(req.img)
+        answerOfQuestion = VQA_Predict(req.img, req.Question)
+        return {'msg': answerOfQuestion}
+    else:
+        return {'msg': "عفوًا لا نستطيع اجابة سؤالك , حاول مرة أخرى"}
+    
+    
+    
+    
+    
+@app.post("/imagecaption")
+async def image_caption(req:GeneralRequest):
+    if req.img != '':
+        #decoded_img = decode_img(req.img)
+        resultOfImage = imageCaption_predict(req.img)
+        return {'msg': resultOfImage}
+    else:
+        return {'msg': "أعد إدخال الصورة من فضلك"}
+    
+    
+    
+    
+@app.post("/scan")
+async def scanning(req:GeneralRequest):
+    if req.img != '':
+        #decoded_img = decode_img(req.img)
+        answerOfscaning = scanning_predict(req.img, req.lang)
+        return {'msg': answerOfscaning}
+    else:
+        return {'msg': "أعد إدخال الصورة من فضلك"}
