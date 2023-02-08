@@ -14,6 +14,7 @@ from deep_translator import GoogleTranslator
 from gtts import gTTS
 from transformers import ViltProcessor
 from transformers import ViltForQuestionAnswering
+import easyocr
 
 
 
@@ -155,5 +156,27 @@ def VQA_Predict(image, text:str):
         idx = torch.sigmoid(logits).argmax(-1).item()
         resultOfPredect = model.config.id2label[idx]
         return resultOfPredect
+    except:
+        return "Error. Please try again."
+    
+    
+    
+  
+#Scanning funcations
+def recognize_text(img_path, lang):
+    reader = easyocr.Reader([lang])
+    return reader.readtext(img_path)
+
+
+def scanning_predict(img, lang):
+    try:
+        sentence = ''
+        result = recognize_text(img, lang)
+        for (bbox, text, prob) in result:
+            if prob >= 0.1:
+                sentence += f'{text}'
+
+        return sentence
+
     except:
         return "Error. Please try again."
