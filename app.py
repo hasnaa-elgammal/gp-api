@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from request_bodies.general_request import GeneralRequest
 from request_bodies.speech_to_text_request import SpeechToTextRequest
+from request_bodies.VQA_schema import VQA_Request
 from utils import *
 import base64
 
