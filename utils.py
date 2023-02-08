@@ -170,8 +170,10 @@ def recognize_text(img_path, lang):
 
 def scanning_predict(img, lang):
     try:
+        #img = image.save("temp_files/scan_img.jpg")
         sentence = ''
         result = recognize_text(img, lang)
+        #os.remove("temp_files/scan_img.jpg")
         for (bbox, text, prob) in result:
             if prob >= 0.1:
                 sentence += f'{text}'
