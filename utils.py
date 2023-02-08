@@ -170,7 +170,7 @@ def recognize_text(img_path, lang):
 
 def scanning_predict(img, lang):
     try:
-        #img = image.save("temp_files/scan_img.jpg")
+        #img = img.save("temp_files/scan_img.jpg")
         sentence = ''
         result = recognize_text(img, lang)
         #os.remove("temp_files/scan_img.jpg")
