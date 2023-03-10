@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
 class VQA_Request(BaseModel):
-    Question : str
+    lang: str
+    question : str
     img : str

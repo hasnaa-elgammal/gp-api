@@ -17,11 +17,16 @@ from transformers import ViltForQuestionAnswering
 import easyocr
 
 
-def encode(mp3):
-    mp3=str(base64.b64encode(mp3))
-    return mp3
+def encode(path):
+    with open(path, "rb") as file:
+        result= base64.b64encode(file.read())
+    return result
 
 def decode_img(string):
+    if string[0:2] == "b'":
+        string = string[2:]
+    if string[-1] == "'":
+        string = string[:-1]
     decoded = Image.open(io.BytesIO(base64.b64decode(string)))
     return decoded
 
@@ -51,6 +56,7 @@ def Curr_Pred(img):
 def predict_color(img):
     try:
         model = tf.keras.models.load_model("models/colors.h5")
+        img = img.convert("RGB")
         img = img.save("temp_files/color_img.jpg")
         color_thief = ColorThief("temp_files/color_img.jpg")
         dominant_color = color_thief.get_palette(color_count=5)
@@ -132,9 +138,11 @@ def emotion_finder(img):
 
 def predict_text_to_speech(text,lang):
     tts = gTTS(text=text, lang=lang)
-    filename = "hello2.mp3"
+    filename = "temp_files/hello2.mp3"
     tts.save(filename)
-    os.system(f"start {filename}")
+    result = encode(filename)
+    os.remove(filename)
+    return result
 
 def add_familiar_face(img):
     pass
@@ -161,15 +169,11 @@ def VQA_Predict(image, text:str):
         return resultOfPredect
     except:
         return "Error. Please try again."
-    
-    
-    
-  
+     
 #Scanning funcations
 def recognize_text(img_path, lang):
     reader = easyocr.Reader([lang])
     return reader.readtext(img_path)
-
 
 def scanning_predict(img, lang):
     try:
