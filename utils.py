@@ -17,6 +17,9 @@ from transformers import ViltForQuestionAnswering
 import easyocr
 
 
+def encode(mp3):
+    mp3=str(base64.b64encode(mp3))
+    return mp3
 
 def decode_img(string):
     decoded = Image.open(io.BytesIO(base64.b64decode(string)))
