@@ -15,28 +15,34 @@ async def root():
 @app.post("/speechtotext")
 async def speech_to_text(req: SpeechToTextRequest):
     if req.sound != '':
-        result = predict_speech_to_text(req.sound)
+        result = speech_to_text(req.sound, req.lang)
     else:
         result = "Error. Please try again."
-    if req.lang != 'en':
-        result = translate('en', req.lang, result)
-    output = {
-        "lang": req.lang,
-        "result": result
-    }
-    return json.dumps(output)
+        if req.lang != 'en':
+            result = translate('en', req.lang, result)
+        result = {
+            "lang": req.lang,
+            "result": result
+        }
+    return json.dumps(result)
 
 @app.post("/money")
 async def money(req: GeneralRequest):
     if req.img != '':
         decoded_img = decode_img(req.img)
-        result = Curr_Pred(decoded_img)
-        return predict_text_to_speech(result,"ar")
+        result = predict_currency(decoded_img)
+        if req.lang != 'ar':
+            result = translate('ar', req.lang, result)
     else:
         result = "Error. Please try again."
         if req.lang != 'en':
             result = translate('en', req.lang, result)
-        return predict_text_to_speech(result, req.lang)
+    result = text_to_speech(result, req.lang)
+    output = {
+        "lang": req.lang,
+        "result": str(result)
+    }
+    return json.dumps(output)
 
 @app.post("/checkface")
 async def check_face():
@@ -47,17 +53,20 @@ async def emotions(req: GeneralRequest):
     if req.img != '':
         decoded_img = decode_img(req.img)
         new_img, emotion = emotion_finder(decoded_img)
-        if (emotion == []):
-            emotion = "عفوا لا نستطيع اكتشاف وجوه، حاول مرة أخرى "
+        if (emotion == ''):
+            result = "We can't find any face. Please try again "
         else:
-            emotion = " و ".join(emotion)
-            emotion = "يبدو " + emotion
-        return predict_text_to_speech(emotion,"ar")    
+            result = "Looks " + emotion   
     else:
         result = "Error. Please try again."
-        if req.lang != 'en':
-            result = translate('en', req.lang, result)
-        return predict_text_to_speech(result, req.lang)
+    if req.lang != 'en':
+        result = translate('en', req.lang, result)
+    result = text_to_speech(result, req.lang)
+    output = {
+        "lang": req.lang,
+        "result": str(result)
+    }
+    return json.dumps(output)
 
 @app.post("/color")
 async def color(req: GeneralRequest):
@@ -68,7 +77,7 @@ async def color(req: GeneralRequest):
         result = "Error. Please try again."
     if req.lang != 'en':
         result = translate('en', req.lang, result)
-    result = predict_text_to_speech(result,req.lang)
+    result = text_to_speech(result,req.lang)
     output = {
         "lang": req.lang,
         "result": str(result)
@@ -79,25 +88,47 @@ async def color(req: GeneralRequest):
 async def VQA(req:VQA_Request):
     if req.img != '' or req.question != '':
         #decoded_img = decode_img(req.img)
-        answerOfQuestion = VQA_Predict(req.img, req.question)
-        return {'msg': answerOfQuestion}
+        result = VQA_Predict(req.img, req.question)
     else:
-        return {'msg': "عفوًا لا نستطيع اجابة سؤالك , حاول مرة أخرى"}
+        result = "Error. Please try again."
+        if req.lang != 'en':
+            result = translate('en', req.lang, result)
+    result = text_to_speech(result,req.lang)
+    output = {
+        "lang": req.lang,
+        "result": str(result)
+    }
+    return json.dumps(output)
       
 @app.post("/imagecaption")
 async def image_caption(req:GeneralRequest):
     if req.img != '':
         #decoded_img = decode_img(req.img)
-        resultOfImage = imageCaption_predict(req.img)
-        return {'msg': resultOfImage}
+        result = imageCaption_predict(req.img)
     else:
-        return {'msg': "أعد إدخال الصورة من فضلك"}
+        result = "Error. Please try again."
+        if req.lang != 'en':
+            result = translate('en', req.lang, result)
+    result = text_to_speech(result,req.lang)
+    output = {
+        "lang": req.lang,
+        "result": str(result)
+    }
+    return json.dumps(output)
         
 @app.post("/scan")
 async def scanning(req:GeneralRequest):
     if req.img != '':
-        #decoded_img = decode_img(req.img)
-        answerOfscaning = scanning_predict(req.img, req.lang)
-        return {'msg': answerOfscaning}
+        decoded_img = decode_img(req.img)
+        result = scanning_predict(decoded_img, req.lang)
     else:
-        return {'msg': "أعد إدخال الصورة من فضلك"}
+        result = "Error. Please try again."
+        if req.lang != 'en':
+            result = translate('en', req.lang, result)
+    result = text_to_speech(result,req.lang)
+    output = {
+        "lang": req.lang,
+        "result": str(result)
+    }
+    return json.dumps(output)
+    

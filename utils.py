@@ -16,7 +16,6 @@ from transformers import ViltProcessor
 from transformers import ViltForQuestionAnswering
 import easyocr
 
-
 def encode(path):
     with open(path, "rb") as file:
         result= base64.b64encode(file.read())
@@ -30,17 +29,17 @@ def decode_img(string):
     decoded = Image.open(io.BytesIO(base64.b64decode(string)))
     return decoded
 
-def Curr_Pred(img):
+def predict_currency(img):
     y = ['100', '100', '10', '10', '200', '200', '20', '20', '50', '50', '5', '5']
     # import model
     model = tf.keras.models.load_model("models/money.h5", compile=False)
+    img = img.convert("RGB")
     img = np.array(img)
     dim = (224, 224)
     img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
     img = np.expand_dims(img, axis=0)
     img = img / 255
     pred_probab = model.predict(img)[0]
-
     pred = ""
     if max(pred_probab) < 0.45:
         pred = "من فضلك أعد تصوير العملة"
@@ -50,7 +49,6 @@ def Curr_Pred(img):
             pred = text + " جُنَيهات "
         else:
             pred = text + " جُنَيهًا "
-
     return pred
 
 def predict_color(img):
@@ -71,33 +69,37 @@ def predict_color(img):
     except:
         return "Error. Please try again."
     
-def predict_speech_to_text(speech):
+def speech_to_text(speech, lang):
     try:
+        if speech[0:2] == "b'":
+            speech = speech[2:]
+        if speech[-1] == "'":
+            speech = speech[:-1]
         model = whisper.load_model("small")
         wav_file = open("temp_files/speech_temp.wav", "wb")
         decode_string = base64.b64decode(speech)
         wav_file.write(decode_string)
         result = model.transcribe("speech_temp.wav")
         result = {
-            'text': result['text'],
+            'result': result['text'],
             'lang': result['language']
         }
         os.remove("temp_files/speech_temp.wav")
         return result
     except:
         result = {
-            'text': "Error. Please try again."
+            'result': "Error. Please try again.",
+            'lang': lang
         }
         
 def translate(src, target, text):
     return GoogleTranslator(source=src, target=target).translate(text)
 
 class FacialExpressionModel(object):
-    EMOTIONS_LIST = ["Angry", "Disgust",
-                    "Fear", "Happy",
+    EMOTIONS_LIST = ["Angry", "Disgusted",
+                    "Scared", "Happy",
                     "Neutral", "Sad",
-                    "Surprise"]
-    EMOTIONS_ar = ["غاضب" ,"مشمئز","خائف", "سعيد", "حزين", "متفاجيء","طبيعي"]
+                    "Surprised"]
     def __init__(self, model_json_file, model_weights_file):
         # load model from JSON file
         with open(model_json_file, "r") as json_file:
@@ -108,14 +110,14 @@ class FacialExpressionModel(object):
         self.loaded_model.make_predict_function()
     def predict_emotion(self, img):
         self.preds = self.loaded_model.predict(img)
-        return FacialExpressionModel.EMOTIONS_LIST[np.argmax(self.preds)],FacialExpressionModel.EMOTIONS_ar[np.argmax(self.preds)]   
+        return FacialExpressionModel.EMOTIONS_LIST[np.argmax(self.preds)]
 
 def emotion_finder(img):
     detection_model_path = cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
     emotion_model_path = FacialExpressionModel("models/model.json", 'models/emotion.h5')
     face_detection = cv2.CascadeClassifier(detection_model_path)
-    EMOTIONS = ["angry" ,"disgust","scared", "happy", "sad", "surprised","neutral"]
-   # emotion_classifier = load_model(emotion_model_path, compile=False)
+    img = np.array(img.convert('RGB'), dtype=np.uint8)
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
     img = imutils.resize(img,width=400)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_detection.detectMultiScale(gray,scaleFactor=1.1,minNeighbors=5)
@@ -133,10 +135,11 @@ def emotion_finder(img):
 
             cv2.putText(imgClone, "ss", (fX, fY), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
             cv2.rectangle(imgClone,(fX,fY),(fX+fW,fY+fH),(255,0,0),2)
-
+    else:
+        preds = ''
     return imgClone,  preds
 
-def predict_text_to_speech(text,lang):
+def text_to_speech(text,lang):
     tts = gTTS(text=text, lang=lang)
     filename = "temp_files/hello2.mp3"
     tts.save(filename)
@@ -144,12 +147,8 @@ def predict_text_to_speech(text,lang):
     os.remove(filename)
     return result
 
-def add_familiar_face(img):
-    pass
-
 def check_face(img):
     pass
-
 
 def VQA_Predict(image, text:str):
     try:
@@ -176,16 +175,15 @@ def recognize_text(img_path, lang):
     return reader.readtext(img_path)
 
 def scanning_predict(img, lang):
-    try:
-        #img = img.save("temp_files/scan_img.jpg")
-        sentence = ''
-        result = recognize_text(img, lang)
-        #os.remove("temp_files/scan_img.jpg")
-        for (bbox, text, prob) in result:
-            if prob >= 0.1:
-                sentence += f'{text}'
-
-        return sentence
-
-    except:
-        return "Error. Please try again."
+    # try:
+    img = img.convert("RGB")
+    img = img.save("temp_files/scan_img.jpg")
+    sentence = ''
+    result = recognize_text("temp_files/scan_img.jpg", lang)
+    for (bbox, text, prob) in result:
+        if prob >= 0.1:
+            sentence += f'{text}'
+    os.remove("temp_files/scan_img.jpg")
+    return sentence
+    # except:
+    #     return "Error. Please try again."
