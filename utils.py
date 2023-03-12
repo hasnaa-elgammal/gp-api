@@ -150,25 +150,25 @@ def text_to_speech(text,lang):
 def check_face(img):
     pass
 
+    
 def VQA_Predict(image, text:str):
-    try:
-        #img = image.save("temp_files/VQA_img.jpg")
-        img = Image.open(image, mode='r')
-        Quest = text
-        processor = ViltProcessor.from_pretrained("dandelin/vilt-b32-finetuned-vqa")
-        # prepare inputs
-        encoding = processor(img, Quest, return_tensors="pt")
-        # load the ViLT model
-        model = ViltForQuestionAnswering.from_pretrained("dandelin/vilt-b32-finetuned-vqa")
-        outputs = model(**encoding)
-        #os.remove("temp_files/VQA_img.jpg")
-        logits = outputs.logits
-        idx = torch.sigmoid(logits).argmax(-1).item()
-        resultOfPredect = model.config.id2label[idx]
-        return resultOfPredect
-    except:
-        return "Error. Please try again."
+    img = image.save("temp_files/VQA_img.jpg")
+    img = Image.open(img, mode='r')
+    Quest = text
+    processor = ViltProcessor.from_pretrained("dandelin/vilt-b32-finetuned-vqa")
+    # prepare inputs
+    encoding = processor(img, Quest, return_tensors="pt")
+    # load the ViLT model
+    model = ViltForQuestionAnswering.from_pretrained("dandelin/vilt-b32-finetuned-vqa")
+    outputs = model(**encoding)
+    os.remove("temp_files/VQA_img.jpg")
+    logits = outputs.logits
+    idx = torch.sigmoid(logits).argmax(-1).item()
+    resultOfPredect = model.config.id2label[idx]
+    return resultOfPredect
+    
      
+        
 #Scanning funcations
 def recognize_text(img_path, lang):
     reader = easyocr.Reader([lang])
