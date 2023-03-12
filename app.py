@@ -84,22 +84,26 @@ async def color(req: GeneralRequest):
     }
     return json.dumps(output)
     
+
+
 @app.post("/VQA")
 async def VQA(req:VQA_Request):
     if req.img != '' or req.question != '':
-        #decoded_img = decode_img(req.img)
-        result = VQA_Predict(req.img, req.question)
+        decoded_img = decode_img(req.img)
+        result = VQA_Predict(decoded_img, req.question)
     else:
         result = "Error. Please try again."
         if req.lang != 'en':
             result = translate('en', req.lang, result)
-    result = text_to_speech(result,req.lang)
+    result = text_to_speech(result, req.lang)
     output = {
         "lang": req.lang,
         "result": str(result)
     }
     return json.dumps(output)
       
+    
+    
 @app.post("/imagecaption")
 async def image_caption(req:GeneralRequest):
     if req.img != '':
