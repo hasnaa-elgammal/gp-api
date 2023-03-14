@@ -152,8 +152,7 @@ def check_face(img):
 
     
 def VQA_Predict(image, text:str):
-    img = image.save("temp_files/VQA_img.jpg")
-    img = Image.open(img, mode='r')
+    img = np.array(image)
     Quest = text
     processor = ViltProcessor.from_pretrained("dandelin/vilt-b32-finetuned-vqa")
     # prepare inputs
@@ -161,7 +160,6 @@ def VQA_Predict(image, text:str):
     # load the ViLT model
     model = ViltForQuestionAnswering.from_pretrained("dandelin/vilt-b32-finetuned-vqa")
     outputs = model(**encoding)
-    os.remove("temp_files/VQA_img.jpg")
     logits = outputs.logits
     idx = torch.sigmoid(logits).argmax(-1).item()
     resultOfPredect = model.config.id2label[idx]
