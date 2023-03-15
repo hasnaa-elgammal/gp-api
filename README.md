@@ -1,2 +1,2 @@
 # gp-api
-# API for SightMate App.
+### API for SightMate App.
