@@ -109,8 +109,8 @@ async def VQA(req:VQA_Request):
 @app.post("/imagecaption")
 async def image_caption(req:GeneralRequest):
     if req.img != '':
-        #decoded_img = decode_img(req.img)
-        result = imageCaption_predict(req.img)
+        decoded_img = decode_img(req.img)
+        result = imageCaption_predict(decoded_img)
     else:
         result = "Error. Please try again."
         if req.lang != 'en':
@@ -122,6 +122,8 @@ async def image_caption(req:GeneralRequest):
     }
     return json.dumps(output)
         
+    
+    
 @app.post("/scan")
 async def scanning(req:GeneralRequest):
     if req.img != '':
