@@ -113,8 +113,8 @@ async def image_caption(req:GeneralRequest):
         result = imageCaption_predict(decoded_img)
     else:
         result = "Error. Please try again."
-        if req.lang != 'en':
-            result = translate('en', req.lang, result)
+    if req.lang != 'en':
+        result = translate('en', req.lang, result)
     result = text_to_speech(result,req.lang)
     output = {
         "lang": req.lang,
