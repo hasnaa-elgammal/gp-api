@@ -121,8 +121,6 @@ python-dateutil
 python-dotenv
 python-multipart
 PyWavelets
-pywin32==302
-pywinpty
 PyYAML
 pyzmq
 regex==2022.10.31
