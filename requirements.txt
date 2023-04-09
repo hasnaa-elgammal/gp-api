@@ -80,9 +80,6 @@ MarkupSafe
 matplotlib-inline
 mccabe
 mistune
-mkl-fft
-mkl-random
-mkl-service
 more-itertools
 multidict
 nest-asyncio
