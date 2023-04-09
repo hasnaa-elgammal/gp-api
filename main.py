@@ -6,6 +6,7 @@ from utils import *
 from models.Image_caption import *
 import json
 
+
 app = FastAPI()
 
 @app.get("/")
