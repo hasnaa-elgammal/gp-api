@@ -68,7 +68,7 @@ jedi==0.18.1
 Jinja2
 joblib==1.2.0
 jsonschema
-keras==2.6.0
+keras
 Keras-Preprocessing
 lazy-object-proxy==1.4.3
 lazy_loader==0.1
