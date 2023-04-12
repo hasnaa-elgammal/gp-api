@@ -79,7 +79,7 @@ def speech_to_text(speech, lang):
         wav_file = open("temp_files/speech_temp.wav", "wb")
         decode_string = base64.b64decode(speech)
         wav_file.write(decode_string)
-        result = model.transcribe("speech_temp.wav")
+        result = model.transcribe("temp_files/speech_temp.wav")
         result = {
             'result': result['text'],
             'lang': result['language']
