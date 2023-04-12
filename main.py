@@ -14,7 +14,7 @@ async def root():
     return {'result': 'hello'}
 
 @app.post("/speechtotext")
-async def speech_to_text(req: SpeechToTextRequest):
+async def speechtotext(req: SpeechToTextRequest):
     if req.sound != '':
         result = speech_to_text(req.sound, req.lang)
     else:
