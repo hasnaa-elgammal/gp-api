@@ -21,11 +21,11 @@ async def speechtotext(req: SpeechToTextRequest):
         result = "Error. Please try again."
         if req.lang != 'en':
             result = translate('en', req.lang, result)
-        result = {
-            "lang": req.lang,
-            "result": result
-        }
-    return json.dumps(result)
+        # result = {
+        #     "lang": req.lang,
+        #     "result": result
+        # }
+    return str(result)
 
 @app.post("/money")
 async def money(req: GeneralRequest):
@@ -38,11 +38,11 @@ async def money(req: GeneralRequest):
         result = "Error. Please try again."
         if req.lang != 'en':
             result = translate('en', req.lang, result)
-    output = {
-        "lang": req.lang,
-        "result": str(result)
-    }
-    return json.dumps(output)
+    # output = {
+    #     "lang": req.lang,
+    #     "result": str(result)
+    # }
+    return str(result)
 
 @app.post("/checkface")
 async def check_face():
@@ -61,11 +61,11 @@ async def emotions(req: GeneralRequest):
         result = "Error. Please try again."
     if req.lang != 'en':
         result = translate('en', req.lang, result)
-    output = {
-        "lang": req.lang,
-        "result": str(result)
-    }
-    return json.dumps(output)
+    # output = {
+    #     "lang": req.lang,
+    #     "result": str(result)
+    # }
+    return str(result)
 
 @app.post("/color")
 async def color(req: GeneralRequest):
@@ -76,11 +76,11 @@ async def color(req: GeneralRequest):
         result = "Error. Please try again."
     if req.lang != 'en':
         result = translate('en', req.lang, result)
-    output = {
-        "lang": req.lang,
-        "result": str(result)
-    }
-    return json.dumps(output)
+    # output = {
+    #     "lang": req.lang,
+    #     "result": str(result)
+    # }
+    return str(result)
     
 
 
@@ -95,11 +95,11 @@ async def VQA(req:VQA_Request):
         result = "Error. Please try again."
     if req.lang != 'en':
         result = translate('en', req.lang, result)
-    output = {
-        "lang": req.lang,
-        "result": str(result)
-    }
-    return json.dumps(output)
+    # output = {
+    #     "lang": req.lang,
+    #     "result": str(result)
+    # }
+    return str(result)
       
     
     
@@ -112,11 +112,11 @@ async def image_caption(req:GeneralRequest):
         result = "Error. Please try again."
     if req.lang != 'en':
         result = translate('en', req.lang, result)
-    output = {
-        "lang": req.lang,
-        "result": str(result)
-    }
-    return json.dumps(output)
+    # output = {
+    #     "lang": req.lang,
+    #     "result": str(result)
+    # }
+    return str(result)
         
     
     
@@ -129,9 +129,9 @@ async def scanning(req:GeneralRequest):
         result = "Error. Please try again."
         if req.lang != 'en':
             result = translate('en', req.lang, result)
-    output = {
-        "lang": req.lang,
-        "result": str(result)
-    }
-    return json.dumps(output)
+    # output = {
+    #     "lang": req.lang,
+    #     "result": str(result)
+    # }
+    return str(result)
     
