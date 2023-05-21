@@ -86,10 +86,7 @@ def speech_to_text(speech, lang):
         os.remove("temp_files/speech_temp.wav")
         return result
     except:
-        result = {
-            'result': "Error. Please try again.",
-            'lang': lang
-        }
+        result ="Error. Please try again."
         
 def translate(src, target, text):
     return GoogleTranslator(source=src, target=target).translate(text)
