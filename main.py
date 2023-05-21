@@ -38,7 +38,7 @@ async def money(req: GeneralRequest):
     return str(result)
 
 @app.post("/checkface")
-async def check_face(req: FaceDetectionRequest):
+async def checkface(req: FaceDetectionRequest):
     if req.img != '' and req.user_id != '':
         database_url = "https://mopser-fc1b9-default-rtdb.firebaseio.com/"
         face_data_path = "/faces/" + str(req.user_id)
