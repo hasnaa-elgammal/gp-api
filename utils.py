@@ -82,10 +82,7 @@ def speech_to_text(speech, lang):
         decode_string = base64.b64decode(speech)
         wav_file.write(decode_string)
         result = model.transcribe("temp_files/speech_temp.wav")
-        result = {
-            'result': result['text'],
-            'lang': result['language']
-        }
+        result =result['text']
         os.remove("temp_files/speech_temp.wav")
         return result
     except:
