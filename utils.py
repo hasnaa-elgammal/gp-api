@@ -15,6 +15,8 @@ from gtts import gTTS
 from transformers import ViltProcessor
 from transformers import ViltForQuestionAnswering
 import easyocr
+import face_recognition
+import requests
 
 def encode(path):
     with open(path, "rb") as file:
@@ -147,8 +149,36 @@ def text_to_speech(text,lang):
     os.remove(filename)
     return result
 
-def check_face(img):
-    pass
+def check_face(lang, img, face_data):
+    image = np.array(img)
+    rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    face_locations = face_recognition.face_locations(rgb_image)
+    face_encodings = face_recognition.face_encodings(rgb_image, face_locations)
+    match_found = False
+    matched_name = None
+
+    for face_id, face_details in face_data.items():
+        known_face_url = face_details['image']
+        known_face_name = face_details['name']
+        response = requests.get(known_face_url)
+        known_face_image = np.array(Image.open(io.BytesIO(response.content)))
+        known_face_rgb = cv2.cvtColor(known_face_image, cv2.COLOR_BGR2RGB)
+        known_face_encoding = face_recognition.face_encodings(known_face_rgb)[0]
+        matches = face_recognition.compare_faces([known_face_encoding], face_encodings[0])
+        if matches[0]:
+            match_found = True
+            matched_name = known_face_name
+            break
+
+    if match_found:
+        result = f"{matched_name}"
+    else:
+        result = "No match found: Unknown"
+        if lang != 'en':
+            result = translate('en', lang, result)
+
+    return result
+
 
     
 def VQA_Predict(image, text:str):
@@ -163,9 +193,7 @@ def VQA_Predict(image, text:str):
     logits = outputs.logits
     idx = torch.sigmoid(logits).argmax(-1).item()
     resultOfPredect = model.config.id2label[idx]
-    return resultOfPredect
-    
-     
+    return resultOfPredect  
         
 #Scanning funcations
 def recognize_text(img_path, lang):
