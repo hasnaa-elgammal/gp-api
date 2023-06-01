@@ -17,6 +17,8 @@ from transformers import ViltForQuestionAnswering
 import easyocr
 import face_recognition
 import requests
+from google.cloud import vision
+from google.cloud.vision_v1 import types
 
 def encode(path):
     with open(path, "rb") as file:
@@ -207,3 +209,28 @@ def scanning_predict(img, lang):
     return sentence
     # except:
     #     return "Error. Please try again."
+
+def detect(img):
+    
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'sightmateocr-478aeff2741b.json'
+    img = img.convert("RGB")
+    img = img.save("temp_files/scan_img.jpg")
+    
+    client = vision.ImageAnnotatorClient()
+
+    with io.open("temp_files/scan_img.jpg", 'rb') as image_file:
+        content = image_file.read()
+    
+    image = types.Image(content=content)
+
+    response = client.text_detection(image=image)
+    
+    text = response.text_annotations
+    
+    sequence = text[0].description
+    
+    os.remove("temp_files/scan_img.jpg")
+    if response.error.message:
+        raise Exception(response.error.message)
+    else:
+         return sequence.replace("\n", " ")

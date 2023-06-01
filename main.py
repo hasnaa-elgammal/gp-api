@@ -106,7 +106,7 @@ async def image_caption(req:GeneralRequest):
 async def scanning(req:GeneralRequest):
     if req.img != '':
         decoded_img = decode_img(req.img)
-        result = scanning_predict(decoded_img, req.lang)
+        result = detect(decoded_img)
     else:
         result = "Error. Please try again."
         if req.lang != 'en':
